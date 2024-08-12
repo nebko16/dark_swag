@@ -4,7 +4,7 @@
 
 This module enables <a href="https://swagger.io/specification/">Swagger OpenAPI</a> docs that default to dark mode but can be toggled on or off, specifically for <a href="https://github.com/fastapi/fastapi?tab=readme-ov-file">FastAPI</a>.  Requires virtually zero work to implement.  `DarkSwag` has an optional argument for adding your project or company logo.  Implementation is cake, depending on how you implement it.  The easiest implementation method involves importing the `FastAPI` class override, and that's it.
 
-<img src="src/dark_swag/static/screenshot.png">
+<img src="src/dark_swag/static/screenshot.png" width="500">
 
 <hr>
 
@@ -18,40 +18,63 @@ python -m pip install dark_swag
 ## Implementation
 There are three main ways you can implement this into your API.
 
-1. The easiest is to import the `FastAPI` override, as it requires no additional change to your existing code.
-   ```python
-   from dark_swag import FastAPI
-   ```
-    - [Full example of this implementation](src/dark_swag/example.py)
+<hr>
 
+### Method 1: FastAPI class override (easiest)
 
-2. You can import the `get_dark_router` factory function to generate a route that you can immediately add to your existing `FastAPI` instance.
-   ```python
-   from fastapi import FastAPI
-   from dark_swag import get_dark_router
+  The easiest is to import the `FastAPI` override, as it requires no additional change to your existing code.
+
+  ```python
+  from dark_swag import FastAPI
+  ```
+
+  [Full example of this implementation](src/dark_swag/example.py)
+
+<hr>
+
+### Method 2: Docs route factory (easy)
+
+  You can import the `get_dark_router` factory function to generate a route that you can immediately add to your existing `FastAPI` instance.
+
+  ```python
+  from dark_swag import get_dark_router
     
-   app = FastAPI(docs_url=None) # this argument is required if you use this implementation
-   app.include_router(get_dark_router(app))
-   ```
-    - [Full example of this implementation](src/dark_swag/example2.py)
+  app = FastAPI(docs_url=None) # this argument is required if you use this implementation
+   
+  docs_router = get_dark_router(app)
+  app.include_router(docs_router)
+  ```
 
+  - [Full example of this implementation](src/dark_swag/example2.py)
 
-3. You can manually define the docs route yourself, and use the helper function to generate the dark-enabled html.
-   ```python
-   from fastapi import FastAPI
-   from dark_swag import get_dark_swagger_html
+<hr>
 
-   app = FastAPI(docs_url=None) # this argument is required if you use this implementation
+### Method 3: Manually define the docs routes (if you need it)
+
+  You can manually define the docs route(s) yourself, and use the helper function to generate the dark-enabled html.  This is a lot more tedius and involved, so you probably won't do it this way unless you have some very specific use case, but if you need it, this is how you can do it.  The link below the example code has a full implementation that matches the first two easier methods.
+
+  *(The example in this code block doesn't support toggling back to light mode, but the full example in the file does)*
+
+  ```python
+  from fastapi import FastAPI
+  from dark_swag import get_dark_swagger_html
+
+  app = FastAPI(docs_url=None) # this argument is required if you use this implementation
     
-   @app.get('/docs', include_in_schema=False)
-   async def dark_swagger():
-       return get_dark_swagger_html(app)
+  @app.get('/docs', include_in_schema=False)
+  async def dark_swagger():
+      return get_dark_swagger_html(app)
    ```
-    - [Full example of this implementation](src/dark_swag/example3.py)
 
-Be sure to add `docs_url=None` to your `FastAPI` instantiation if you use methods `#2` or `#3`, else this won't work, since `FastAPI` will generate the `/docs` endpoint internally and your manual definition of it won't overwrite it.  
+  - [Full example of this implementation](src/dark_swag/example3.py)
 
-This is still 100% Swagger.  We just inject CSS to create the dark theme in-flight before it's sent to the caller.
+<hr>
+
+### Note!
+
+Be sure to add `docs_url=None` to your `FastAPI` instantiation if you use methods `#2` or `#3`, else it won't work, since `FastAPI` will generate the `/docs` endpoint internally and your manual definition of it won't overwrite it.  
+
+This is still 100% `Swagger`.  We just inject CSS to create the dark theme in-flight before it's sent to the caller.  Reasoning for this is at the very bottom fo this doc.
 
 <hr>
 
@@ -63,30 +86,34 @@ You can add your own logo to the top-right corner of the `Swagger` doc by passin
 You'll probably need to make a route to host them from, or you can also pass in the image as base64 format like this: 
  
 1. If you used the `FastAPI` override, you add the argument to it:
-   ```python
-   # mounted path, like a FastAPI static endpoint
-   app = FastAPI(logo='static/logo.png')
+
+  ```python
+  # mounted path, like a FastAPI static endpoint
+  app = FastAPI(logo='static/logo.png')
    
-   """ OR """
+  """ OR """
    
-   # raw base64 string with the appropriate prefix (below example is for an SVG)
-   app = FastAPI(logo="data:image/svg+xml;base64,xucz0i... (shortened for illustration) ...L3d3dy")
-   ```
+  # raw base64 string with the appropriate prefix (below example is for an SVG)
+  app = FastAPI(logo="data:image/svg+xml;base64,xucz0i... (shortened for illustration) ...L3d3dy")
+  ```
 
 2. If you used the `dark_router`, you add the argument to the factory function:
-   ```python
-   dark_router = get_dark_router(app, logo='static/logo.png')
-   ```
+
+  ```python
+  dark_router = get_dark_router(app, logo='static/logo.png')
+  ```
 
 3. If you used the helper function to get the `Swagger` HTML and manually defined your `/docs` endpoint, you add the argument to that helper function:
-   ```python
-   return get_dark_swagger_html(app, logo='static/logo.png')
-   ```
+ 
+  ```python
+  return get_dark_swagger_html(app, logo='static/logo.png')
+  ```
+
 <br>
 
 #### The logo placement looks like this:
 
-<img src="src/dark_swag/static/screenshot2.png" height="250">
+<img src="src/dark_swag/static/screenshot2.png" height="220">
 
 <hr>
 
@@ -94,25 +121,28 @@ You'll probably need to make a route to host them from, or you can also pass in 
 Like the above logo, this is also purely for aesthetics.  You basically can pass in a word or short phrase, and it gets drawn on the background in a watermark-like fashion, purely to help branding or for aesthetics. Longer text will probably get truncated due to how this effect was accomplished.
 
 1. If you used the `FastAPI` override, you add `background_text` argument with it:
-   ```python
-   app = FastAPI(background_text='Example 3')
-   ```
+
+  ```python
+  app = FastAPI(background_text='Example 3')
+  ```
 
 2. If you used the `dark_router`, you add the `background_text` argument to it:
-   ```python
-   dark_router = get_dark_router(app, background_text='Example 3')
-   ```
+
+  ```python
+  dark_router = get_dark_router(app, background_text='Example 3')
+  ```
    
 3. If you used the helper function `get_dark_swagger_html`, you do the same thing:
-   ```python
-   return get_dark_swagger_html(app, background_text='Example 3')
-   ```
+ 
+  ```python
+  return get_dark_swagger_html(app, background_text='Example 3')
+  ```
 
 <br>
 
 #### The text looks like this:
 
-   ![screenshot](src/dark_swag/static/screenshot3.png)
+   <img src="src/dark_swag/static/screenshot3.png" width="400">
    
 <hr>
 
@@ -126,7 +156,7 @@ If you click the `Light Mode` toggle at the top right, it will enable light mode
 
 Here's what light mode looks like:
 
-![screenshot](src/dark_swag/static/screenshot4.png)
+<img src="src/dark_swag/static/screenshot4.png" width="500">
 
 <hr>
 
