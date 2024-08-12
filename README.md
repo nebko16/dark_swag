@@ -1,10 +1,10 @@
-<img src="src/dark_swag/static/darkswag_color.svg" height="180">
+<img src="src/dark_swag/static/darkswag_color.svg" height="120" alt="DarkSwag">
 
-# DarkSwag
+<hr>
 
-Get dark-mode `Swagger (OpenAPI)` docs for `FastAPI` without having to modify anything.  `DarkSwag` has an optional argument for adding a logo to the top right.
+This module enables <a href="https://swagger.io/specification/">Swagger OpenAPI</a> docs that default to dark mode but can be toggled on or off, specifically for <a href="https://github.com/fastapi/fastapi?tab=readme-ov-file">FastAPI</a>.  Requires virtually zero work to implement.  `DarkSwag` has an optional argument for adding your project or company logo.  Implementation is cake, depending on how you implement it.  The easiest implementation method involves importing the `FastAPI` class override, and that's it.
 
-![screenshot](src/dark_swag/static/screenshot.png)
+<img src="src/dark_swag/static/screenshot.png">
 
 <hr>
 
@@ -21,8 +21,6 @@ There are three main ways you can implement this into your API.
 1. The easiest is to import the `FastAPI` override, as it requires no additional change to your existing code.
    ```python
    from dark_swag import FastAPI
-  
-   app = FastAPI()
    ```
     - [Full example of this implementation](src/dark_swag/example.py)
 
@@ -51,7 +49,7 @@ There are three main ways you can implement this into your API.
    ```
     - [Full example of this implementation](src/dark_swag/example3.py)
 
-Be sure to add `docs_url=None` to your `FastAPI` instantiation if you use methods #2 or #3, else this won't work, since `FastAPI` will generate the `/docs` endpoint internally and your manual definition of it won't overwrite it.  
+Be sure to add `docs_url=None` to your `FastAPI` instantiation if you use methods `#2` or `#3`, else this won't work, since `FastAPI` will generate the `/docs` endpoint internally and your manual definition of it won't overwrite it.  
 
 This is still 100% Swagger.  We just inject CSS to create the dark theme in-flight before it's sent to the caller.
 
@@ -64,7 +62,6 @@ You can add your own logo to the top-right corner of the `Swagger` doc by passin
 
 You'll probably need to make a route to host them from, or you can also pass in the image as base64 format like this: 
  
-
 1. If you used the `FastAPI` override, you add the argument to it:
    ```python
    # mounted path, like a FastAPI static endpoint
