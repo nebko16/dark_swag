@@ -2,12 +2,13 @@ from fastapi import FastAPI as OriginalFastAPI, APIRouter
 from fastapi.openapi.docs import get_swagger_ui_html
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse
-from jinja2 import FileSystemLoader
-import jinja2
+from .utils import render_css, load_static
+from .dark_router import get_dark_router
+from pathlib import Path
+
 
 
 dark_router = APIRouter()
-
 
 
 
@@ -20,7 +21,8 @@ class FastAPI(OriginalFastAPI):
 
         kwargs['docs_url'] = None
         super().__init__(*args, **kwargs)
-        self.mount("/_fastapi_static", StaticFiles(directory="static"), name="static")
+        static_dir = Path(__file__).parent / 'static'
+        self.mount("/_fastapi_static", StaticFiles(directory=static_dir), name="static")
         self.logo: str | None = logo
         self.background_text: str | None = background_text
         self.add_api_route(
@@ -66,44 +68,14 @@ class FastAPI(OriginalFastAPI):
         # return swagger_html
 
 
-def render_css(logo: str | None = None,
-               background_text: str | None = None,
-               mode: str = 'dark') -> str:
-    j2: jinja2.Environment = jinja2.Environment(loader=FileSystemLoader('.'))
-    if mode == 'dark':
-        root_template = j2.get_template('/_fastapi_static/dark.css.jinja2')
-        fill_color = 'white'
-    else:
-        root_template = j2.get_template('/_fastapi_static/light.css.jinja2')
-        fill_color = 'black'
-
-    logo_css: str = ''
-    if logo:
-        logo_template = j2.get_template('/_fastapi_static/logo.css.jinja2')
-        logo_css = logo_template.render({'logo': logo})
-
-    bg_text_css: str = ''
-    if background_text:
-        bg_text_template = j2.get_template('/_fastapi_static/background_text.css.jinja2')
-        bg_text_css = bg_text_template.render({
-            'background_text': background_text,
-            'fill_color': fill_color
-        })
-
-    dark_css: str = root_template.render({
-        'logo': logo_css,
-        'background_text': bg_text_css
-    })
-    return dark_css
-
-
 def get_dark_swagger_html(app: FastAPI,
                           logo: str | None = None,
                           background_text: str | None = None,
                           include_toggle: bool = False,
                           mode: str = 'dark') -> HTMLResponse:
 
-    app.mount("/_fastapi_static", StaticFiles(directory="static"), name="static")
+    static_dir = Path(__file__).parent / 'static'
+    app.mount("/_fastapi_static", StaticFiles(directory=static_dir), name="static")
     swagger_response: HTMLResponse = get_swagger_ui_html(
         openapi_url=app.openapi_url,
         title=app.title,
@@ -123,9 +95,3 @@ def get_dark_swagger_html(app: FastAPI,
     return HTMLResponse(content=injected_html)
 
 
-def load_static(filename: str, default: str = '') -> str:
-    with open(f"/_fastapi_static/{filename}", 'r', encoding='utf-8') as file:
-        static = file.read()
-    if not static:
-        return default
-    return static

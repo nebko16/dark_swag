@@ -1,4 +1,4 @@
-from dark_router import get_dark_router
+from dark_swag import get_dark_router
 from fastapi import FastAPI
 
 

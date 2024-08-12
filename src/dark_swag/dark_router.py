@@ -1,8 +1,9 @@
 from fastapi.openapi.docs import get_swagger_ui_html
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse
+from .utils import render_css, load_static
 from fastapi import FastAPI, APIRouter
-from dark_swag import render_css, load_static
+from pathlib import Path
 
 
 
@@ -12,7 +13,8 @@ def get_dark_router(app: FastAPI,
                     include_light_mode_toggle: bool = True) -> APIRouter:
 
     dark_router = APIRouter()
-    app.mount("/_fastapi_static", StaticFiles(directory="static"), name="static")
+    static_dir = Path(__file__).parent / 'static'
+    app.mount("/_fastapi_static", StaticFiles(directory=static_dir), name="static")
 
     light_toggle = ''
     dark_toggle = ''
