@@ -1,0 +1,35 @@
+body {
+    background-color: rgba(255, 255, 255, 1);
+    color: rgba(0, 0, 0, 1);
+    margin: 0 40px;
+    padding: 0;
+    min-height: 100vh;
+    {{ background_text }}
+}
+
+.swagger-ui {
+    min-width: 510px;
+    border: 1px solid rgba(0, 0, 0, 0.8);
+    box-shadow: 0 3px 4px 3px rgba(0, 0, 0, 0.15);
+    border-radius: 10px;
+    background-color: rgba(200, 200, 200, 0.2);
+    backdrop-filter: blur(4px);
+    padding-top: 8px;
+    margin: 40px auto;
+    max-width: 1460px;
+    {{ logo }}
+}
+
+.swagger-ui .info {margin: 6px 0 6px 0;}
+.swagger-ui .information-container {margin-top: 0;margin-bottom: 60px;}
+.swagger-ui .no-margin {margin-left: 16px;}
+.swagger-ui .models .no-margin {margin-left: auto;}
+.swagger-ui .json-schema-2020-12 {
+    background-color: rgba(233, 233, 237, 1);
+    border: 1px solid rgba(50, 50, 50, 0.4);
+    border-radius: 6px;
+}
+.swagger-ui .json-schema-2020-12-expand-deep-button {color: rgba(75, 75, 75, 0.7);}
+.swagger-ui section.models {border: 1px solid rgba(255, 0, 166, 0.7); background-color: rgba(125, 18, 40, 0.05);}
+
+{{ dark_toggle }}
