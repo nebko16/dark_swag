@@ -148,7 +148,7 @@ Like the above logo, this is also purely for aesthetics.  You basically can pass
 
 ## Aziz, light!
 
-For our friends and colleagues that enjoy being flashbanged when they open documentation, this option is for toggling light mode.  There's a toggle button at the top right.  Implementation methods `#1` and `#2` support this without doing anything extra.  
+For our friends and colleagues that enjoy being flashbanged when they open documentation, this built-in feature is for toggling light mode.  There's a toggle button at the top right.  Implementation methods `#1` and `#2` support this without doing anything extra.  
 
 If you set `DarkSwag` up using the completely manual method `#3`, you need to define both `/docs` and `/docs_light` routes, as this just links between the two.  See [example3.py](src/dark_swag/example3.py) for a working example of this.
 
