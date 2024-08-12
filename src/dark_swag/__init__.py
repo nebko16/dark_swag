@@ -71,20 +71,20 @@ def render_css(logo: str | None = None,
                mode: str = 'dark') -> str:
     j2: jinja2.Environment = jinja2.Environment(loader=FileSystemLoader('.'))
     if mode == 'dark':
-        root_template = j2.get_template('static/dark.css.jinja2')
+        root_template = j2.get_template('/_fastapi_static/dark.css.jinja2')
         fill_color = 'white'
     else:
-        root_template = j2.get_template('static/light.css.jinja2')
+        root_template = j2.get_template('/_fastapi_static/light.css.jinja2')
         fill_color = 'black'
 
     logo_css: str = ''
     if logo:
-        logo_template = j2.get_template('static/logo.css.jinja2')
+        logo_template = j2.get_template('/_fastapi_static/logo.css.jinja2')
         logo_css = logo_template.render({'logo': logo})
 
     bg_text_css: str = ''
     if background_text:
-        bg_text_template = j2.get_template('static/background_text.css.jinja2')
+        bg_text_template = j2.get_template('/_fastapi_static/background_text.css.jinja2')
         bg_text_css = bg_text_template.render({
             'background_text': background_text,
             'fill_color': fill_color
@@ -124,7 +124,7 @@ def get_dark_swagger_html(app: FastAPI,
 
 
 def load_static(filename: str, default: str = '') -> str:
-    with open(f"static/{filename}", 'r', encoding='utf-8') as file:
+    with open(f"/_fastapi_static/{filename}", 'r', encoding='utf-8') as file:
         static = file.read()
     if not static:
         return default
