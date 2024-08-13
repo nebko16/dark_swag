@@ -1,12 +1,12 @@
-import importlib.resources
 from jinja2 import Environment, FileSystemLoader
+import importlib.resources
 
 
 
 def render_css(logo: str | None = None,
                background_text: str | None = None,
-               mode: str = 'dark') -> str:
-
+               mode: str = 'dark',
+               logo_height: int = 60) -> str:
 
     with importlib.resources.path('dark_swag', 'static') as static_path:
         template_loader = FileSystemLoader(static_path)
@@ -22,7 +22,10 @@ def render_css(logo: str | None = None,
         logo_css: str = ''
         if logo:
             logo_template = j2.get_template('logo.css.jinja2')
-            logo_css = logo_template.render({'logo': logo})
+            logo_css = logo_template.render({
+                'logo': logo,
+                'logo_height': logo_height
+            })
 
         bg_text_css: str = ''
         if background_text:
@@ -37,6 +40,7 @@ def render_css(logo: str | None = None,
             'background_text': bg_text_css
         })
         return dark_css
+
 
 def load_static(filename: str, default: str = '') -> str:
     try:

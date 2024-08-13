@@ -16,6 +16,7 @@ class FastAPI(OriginalFastAPI):
     def __init__(self,
                  logo: str | None = None,
                  background_text: str | None = None,
+                 logo_height: int = 60,
                  *args,
                  **kwargs):
 
@@ -24,6 +25,7 @@ class FastAPI(OriginalFastAPI):
         static_dir = Path(__file__).parent / 'static'
         self.mount("/_fastapi_static", StaticFiles(directory=static_dir), name="static")
         self.logo: str | None = logo
+        self.logo_height: int = logo_height
         self.background_text: str | None = background_text
         self.add_api_route(
             '/docs',
@@ -44,9 +46,12 @@ class FastAPI(OriginalFastAPI):
             swagger_js_url='/_fastapi_static/swagger-ui-bundle.js',
             swagger_css_url='/_fastapi_static/swagger-ui.css'
         )
-        dark_css = render_css(logo=self.logo, background_text=self.background_text)
+        dark_css = render_css(logo=self.logo,
+                              logo_height=self.logo_height,
+                              background_text=self.background_text)
         swagger_html = swagger_response.body.decode()
-        injection = f"<style>{dark_css}</style><script>{load_static('light_toggle.js', '')}</script></head>"
+        script: str = load_static('light_toggle.js', '')
+        injection = f"<style>{dark_css}</style><script>{script}</script></head>"
         injected_html = swagger_html.replace("</head>", injection)
         return HTMLResponse(content=injected_html)
 
@@ -59,10 +64,13 @@ class FastAPI(OriginalFastAPI):
             swagger_css_url='/_fastapi_static/swagger-ui.css'
         )
         light_css = render_css(logo=self.logo,
+                               logo_height=self.logo_height,
                                background_text=self.background_text,
                                mode='light')
         swagger_html = swagger_response.body.decode()
-        injection = f"<style>{light_css}</style><script>{load_static('dark_toggle.js', '')}</script></head>"
+
+        script: str = load_static('dark_toggle.js', '')
+        injection = f"<style>{light_css}</style><script>{script}</script></head>"
         injected_html = swagger_html.replace("</head>", injection)
         return HTMLResponse(content=injected_html)
         # return swagger_html
@@ -72,7 +80,8 @@ def get_dark_swagger_html(app: FastAPI,
                           logo: str | None = None,
                           background_text: str | None = None,
                           include_toggle: bool = False,
-                          mode: str = 'dark') -> HTMLResponse:
+                          mode: str = 'dark',
+                          logo_height: int = 60) -> HTMLResponse:
 
     static_dir = Path(__file__).parent / 'static'
     app.mount("/_fastapi_static", StaticFiles(directory=static_dir), name="static")
@@ -85,13 +94,15 @@ def get_dark_swagger_html(app: FastAPI,
     )
     if include_toggle:
         if mode == 'dark':
-            toggle_js = load_static('light_toggle.js', '')
+            script: str = load_static('light_toggle.js', '')
         else:
-            toggle_js = load_static('dark_toggle.js', '')
-    dark_css = render_css(logo=logo, background_text=background_text, mode=mode)
+            script: str = load_static('dark_toggle.js', '')
+
+    dark_css = render_css(logo=logo,
+                          logo_height=logo_height,
+                          background_text=background_text,
+                          mode=mode)
     swagger_html = swagger_response.body.decode()
-    injection = f"<style>{dark_css}</style><script>{toggle_js}</script></head>"
+    injection = f"<style>{dark_css}</style><script>{script}</script></head>"
     injected_html = swagger_html.replace("</head>", injection)
     return HTMLResponse(content=injected_html)
-
-

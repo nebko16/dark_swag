@@ -1,5 +1,5 @@
 body {
-    background-color: rgba(255, 255, 255, 1);
+    background-color: rgba(200, 200, 200, 0.9);
     color: rgba(0, 0, 0, 1);
     margin: 0 40px;
     padding: 0;
@@ -12,8 +12,8 @@ body {
     border: 1px solid rgba(0, 0, 0, 0.8);
     box-shadow: 0 3px 4px 3px rgba(0, 0, 0, 0.15);
     border-radius: 10px;
-    background-color: rgba(200, 200, 200, 0.2);
-    backdrop-filter: blur(4px);
+    background-color: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(6px);
     padding-top: 8px;
     margin: 40px auto;
     max-width: 1460px;
@@ -29,7 +29,58 @@ body {
     border: 1px solid rgba(50, 50, 50, 0.4);
     border-radius: 6px;
 }
+.swagger-ui .json-schema-2020-12,
+.swagger-ui .json-schema-2020-12-keyword,
+.swagger-ui .json-schema-2020-12-keyword--properties {
+    border: 0;
+}
 .swagger-ui .json-schema-2020-12-expand-deep-button {color: rgba(75, 75, 75, 0.7);}
-.swagger-ui section.models {border: 1px solid rgba(255, 0, 166, 0.7); background-color: rgba(125, 18, 40, 0.05);}
+.swagger-ui section.models {
+    border: 1px solid rgba(255, 0, 166, 0.7);
+    background-color: rgba(125, 18, 40, 0.05);
+}
 
 {{ dark_toggle }}
+
+.swagger-ui .modal-ux, .modal-ux-inner {
+    max-height: 90vh;
+    height: auto;
+    overflow-y: visible;
+}
+.swagger-ui .dialog-ux .modal-ux-content {
+    height: auto;
+    overflow-y: visible;
+    max-height: 90vh;
+}
+.swagger-ui .modal-ux {
+    top: 60px;
+}
+.swagger-ui .dialog-ux {
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+    height: 100vh;
+    width: 100%;
+}
+.swagger-ui .scheme-container {
+    background-color: rgba(255, 255, 255, 0);
+}
+.swagger-ui .dialog-ux .backdrop-ux {
+    background-color: rgba(255, 255, 255, 0);
+}
+
+.swagger-ui .authorization__btn .locked path,
+.swagger-ui .btn.authorize.locked path {
+    d: path("M15.8 8H14V5.6C14 2.703 12.665 1 10 1 7.334 1 6 2.703 6 5.6V6h2v-.801C8 3.754 8.797 3 10 3c1.203 0 2 .754 2 2.199V8H4c-.553 0-1 .646-1 1.199V17c0 .549.428 1.139.951 1.307l1.197.387C5.672 18.861 6.55 19 7.1 19h5.8c.549 0 1.428-.139 1.951-.307l1.196-.387c.524-.167.953-.757.953-1.306V9.199C17 8.646 16.352 8 15.8 8z");
+    fill: rgb(0, 197, 0);
+}
+.swagger-ui .authorization__btn .unlocked path,
+.swagger-ui .btn.authorize.unlocked path {
+    d: path("M15.8 8H14V5.6C14 2.703 12.665 1 10 1 7.334 1 6 2.703 6 5.6V8H4c-.553 0-1 .646-1 1.199V17c0 .549.428 1.139.951 1.307l1.197.387C5.672 18.861 6.55 19 7.1 19h5.8c.549 0 1.428-.139 1.951-.307l1.196-.387c.524-.167.953-.757.953-1.306V9.199C17 8.646 16.352 8 15.8 8zM12 8H8V5.199C8 3.754 8.797 3 10 3c1.203 0 2 .754 2 2.199V8z");
+    fill: rgb(208, 0, 0);
+}
+
+.swagger-ui .authorization__btn .unlocked,
+.swagger-ui .authorization__btn .locked {
+    opacity: 1;
+}
+
