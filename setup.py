@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='dark_swag',
-    version='1.0.1',
+    version='1.0.2',
     author='nebko16',
     author_email='nebko16@gmail.com',
     description='Dark mode Swagger for your FastAPI apps',
