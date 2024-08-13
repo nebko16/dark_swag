@@ -11,8 +11,8 @@ This module gives you dark-mode for <a href="https://swagger.io/specification/">
 - Tweaked the auth modal so that it grows instead of scrolling within the window when you have several auth methods.
 - Light mode is more than just the standard doc.  It still supports the optional logo and the other fixes and tweaks.
 
-<img src="src/dark_swag/static/docs_images/whole_dark.png" width="400">
-<img src="src/dark_swag/static/docs_images/whole_light.png" width="400">
+<img src="src/dark_swag/static/docs_images/whole_dark.png" width="380">
+<img src="src/dark_swag/static/docs_images/whole_light.png" width="380">
 
 <hr>
 
