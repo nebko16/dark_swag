@@ -9,7 +9,7 @@ app = FastAPI(docs_url=None)
 @app.get('/docs', include_in_schema=False)
 async def dark_swagger():
     return get_dark_swagger_html(app,
-                                 '/_fastapi_static/darkswag.svg',
+                                 '/_fastapi_static/your_logo.svg',
                                  'Example 3',
                                  include_toggle=True)
 
@@ -17,7 +17,7 @@ async def dark_swagger():
 @app.get('/docs_light', include_in_schema=False)
 async def dark_swagger():
     return get_dark_swagger_html(app,
-                                 '/_fastapi_static/darkswag.svg',
+                                 '/_fastapi_static/your_logo.svg',
                                  'Example 3',
                                  include_toggle=True,
                                  mode='light')

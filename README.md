@@ -2,9 +2,17 @@
 
 <hr>
 
-This module enables <a href="https://swagger.io/specification/">Swagger OpenAPI</a> docs that default to dark mode but can be toggled on or off, specifically for <a href="https://github.com/fastapi/fastapi?tab=readme-ov-file">FastAPI</a>.  Requires virtually zero work to implement.  `DarkSwag` has an optional argument for adding your project or company logo.  Implementation is cake, depending on how you implement it.  The easiest implementation method involves importing the `FastAPI` class override, and that's it.
+This module gives you dark-mode for <a href="https://swagger.io/specification/">Swagger OpenAPI</a> docs for your <a href="https://github.com/fastapi/fastapi?tab=readme-ov-file">FastAPI</a> apps.
 
-<img src="src/dark_swag/static/screenshot.png" width="500">
+- Can be as easy as a single line of code to implement; see below for details.
+- Defaults to dark-mode, but has a toggle at the top-right for switching to light-mode
+- Allows you to optionally add your own logo to the top of the doc
+- Reverses the auth padlock icon, so that it shows it locked and red when you aren't authenticated, and green and unlocked after you've authenticated.  `OpenAPI`'s decision about how this works by default is one of the strangest things I've come across.
+- Tweaked the auth modal so that it grows instead of scrolling within the window when you have several auth methods.
+- Light mode is more than just the standard doc.  It still supports the optional logo and the other fixes and tweaks.
+
+<img src="src/dark_swag/static/docs_images/whole_dark.png" width="400">
+<img src="src/dark_swag/static/docs_images/whole_light.png" width="400">
 
 <hr>
 
@@ -30,6 +38,8 @@ There are three main ways you can implement this into your API.
 
   [Full example of this implementation](src/dark_swag/example.py)
 
+  *The above example has a little bit of everything in it for the sake of testing.*
+
 <hr>
 
 ### Method 2: Docs route factory (easy)
@@ -40,23 +50,20 @@ There are three main ways you can implement this into your API.
   from dark_swag import get_dark_router
     
   app = FastAPI(docs_url=None) # this argument is required if you use this implementation
-   
-  docs_router = get_dark_router(app)
-  app.include_router(docs_router)
+  app.include_router(get_dark_router(app))
   ```
 
-  - [Full example of this implementation](src/dark_swag/example2.py)
+  [Full example of this implementation](src/dark_swag/example2.py)
 
 <hr>
 
 ### Method 3: Manually define the docs routes (if you need it)
 
-  You can manually define the docs route(s) yourself, and use the helper function to generate the dark-enabled html.  This is a lot more tedius and involved, so you probably won't do it this way unless you have some very specific use case, but if you need it, this is how you can do it.  The link below the example code has a full implementation that matches the first two easier methods.
+  You can manually define the docs route(s) yourself, and use the helper function to generate the dark-enabled html.  This is a lot more tedius and involved, so you probably won't do it this way unless you have some very specific use case, but if you need it, this is how you can do it.  The link below the example code has a full implementation that functionally matches the first two easier methods.
 
   *(The example in this code block doesn't support toggling back to light mode, but the full example in the file does)*
 
   ```python
-  from fastapi import FastAPI
   from dark_swag import get_dark_swagger_html
 
   app = FastAPI(docs_url=None) # this argument is required if you use this implementation
@@ -66,22 +73,26 @@ There are three main ways you can implement this into your API.
       return get_dark_swagger_html(app)
    ```
 
-  - [Full example of this implementation](src/dark_swag/example3.py)
-
-<hr>
+  [Full example of this implementation](src/dark_swag/example3.py)
 
 ### Note!
 
 Be sure to add `docs_url=None` to your `FastAPI` instantiation if you use methods `#2` or `#3`, else it won't work, since `FastAPI` will generate the `/docs` endpoint internally and your manual definition of it won't overwrite it.  
 
-This is still 100% `Swagger`.  We just inject CSS to create the dark theme in-flight before it's sent to the caller.  Reasoning for this is at the very bottom fo this doc.
+This is still 100% `Swagger`.  We just inject CSS into the document head to create the dark theme in-flight before it's sent to the caller.  Reasoning for this is at the very bottom of this doc.
 
 <hr>
 
 ## Features
 
 ### Custom Logo
+
+<img src="src/dark_swag/static/docs_images/custom_logo.png" height="100">
+<img src="src/dark_swag/static/docs_images/custom_logo2.png" height="100">
+
 You can add your own logo to the top-right corner of the `Swagger` doc by passing a URL or path to an image to the argument `logo`.
+
+You can adjust the size by using the optional `logo_height` argument.  The width adjusts automatically and proportionally.  It defaults to 60px height if you don't use this argument.
 
 You'll probably need to make a route to host them from, or you can also pass in the image as base64 format like this: 
  
@@ -109,16 +120,10 @@ You'll probably need to make a route to host them from, or you can also pass in 
   return get_dark_swagger_html(app, logo='static/logo.png')
   ```
 
-<br>
-
-#### The logo placement looks like this:
-
-<img src="src/dark_swag/static/screenshot2.png" height="220">
-
 <hr>
 
 ### Background Text
-Like the above logo, this is also purely for aesthetics.  You basically can pass in a word or short phrase, and it gets drawn on the background in a watermark-like fashion, purely to help branding or for aesthetics. Longer text will probably get truncated due to how this effect was accomplished.
+Like the above logo, this is also purely for aesthetics or branding.  You basically can pass in a word or short phrase, and it gets drawn on the background in a watermark-like fashion, purely to help branding or for aesthetics. Longer text will probably get truncated due to how this effect was accomplished.
 
 1. If you used the `FastAPI` override, you add `background_text` argument with it:
 
@@ -142,7 +147,7 @@ Like the above logo, this is also purely for aesthetics.  You basically can pass
 
 #### The text looks like this:
 
-   <img src="src/dark_swag/static/screenshot3.png" width="400">
+   <img src="src/dark_swag/static/docs_images/background_text.png" width="400">
    
 <hr>
 
@@ -154,9 +159,38 @@ If you set `DarkSwag` up using the completely manual method `#3`, you need to de
 
 If you click the `Light Mode` toggle at the top right, it will enable light mode, and it will look very similar to the standard `Swagger` docs, only it still supports the addition of your own logo and the watermark-like background text.  There's also a toggle for switching back to dark mode.  The toggle isn't toggling CSS.  It's just linking back and forth between `/docs` and `/docs_light`.
 
-Here's what light mode looks like:
+  <img src="src/dark_swag/static/docs_images/toggle.png" width="400">
+  <img src="src/dark_swag/static/docs_images/toggle_dark.png" width="400">
 
-<img src="src/dark_swag/static/screenshot4.png" width="500">
+<hr>
+
+## You shall not pass!
+
+For some reason, the default behavior for Swagger is to show an unlocked padlock when you are **NOT** authenticated, and after authenticating, it changes it to a padlock that is locked.  
+
+Maybe I'm the weird one, but that feels like the exact opposite of what I feel is logical.  To me, a locked padlock means I am not permitted access.  Regardless of why they did it this way, I hated it so much that I ended up fixing this annoyance.  When you are NOT authenticated, the padlock will be locked and red.  After you've authenticated, the padlock will be unlocked and green.  
+
+To me, this makes more sense, and I think most people would agree.
+
+**Not authorized yet:**<br>
+<img src="src/dark_swag/static/docs_images/unauthorized.png" width="200">
+
+**After authorization:**<br>
+<img src="src/dark_swag/static/docs_images/authorized.png" width="200">
+
+Speaking of auth, the standard auth modal scrolls within the inner div when you have more than two auth methods.  This drove me crazy.  I attempted to fix this by allowing the inner and outer divs to grow as needed.  From my limited testing, this appears to have fixed it.  I did this for light mode as well.
+
+<img src="src/dark_swag/static/docs_images/auth_modal.png" width="500">
+
+<hr>
+
+## Docstrings / Markdown
+
+While it isn't super important, I decided to put a little more effort into coloring the formatted docstrings and markdown for things like the `FastAPI` instance description and the route docstrings and schemas.  I didn't do this for light-mode (yet).
+
+<img src="src/dark_swag/static/docs_images/markdown.png" width="250">
+<img src="src/dark_swag/static/docs_images/schema.png" width="350">
+<img src="src/dark_swag/static/docs_images/docstring.png" width="400">
 
 <hr>
 
@@ -169,4 +203,6 @@ If anyone has a better plan, feel free to contribute.  It's hard to test all pos
 
 ### Bananas, isn't it?
 
-![massive stylesheet](src/dark_swag/static/massive_stylesheet.png)
+<img src="src/dark_swag/static/docs_images/massive_stylesheet.png" width="300">
+
+The style sheet for dark mode ended up being around 600 lines at the time of writing this.  It's just small enough that I've considered converting the values to variables in order to templatize it, allowing for custom templates to make it easy to create and use themes.  If I get bored enough I might come back and work on that for fun.

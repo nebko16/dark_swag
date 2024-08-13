@@ -1,11 +1,24 @@
-from fastapi import Form, Query, Path, Body, File, UploadFile
+from fastapi import Form, Query, Path, Body, File, UploadFile, HTTPException
+from fastapi.security import OAuth2PasswordBearer
 from pydantic import BaseModel, Field
 from typing import List, Optional
 from fastapi import APIRouter
+from fastapi import Depends
 from enum import Enum
 
 
 example_router = APIRouter()
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+
+
+@example_router.get("/secure-endpoint", tags=["secure"], summary="Secure Endpoint", description="This endpoint is secured with OAuth2", response_description="A secure response")
+async def secure_endpoint(token: str = Depends(oauth2_scheme)):
+    return {"message": "This is a secure endpoint"}
+
+
+@example_router.post("/token", tags=["auth"], summary="Token Endpoint", description="This endpoint provides OAuth2 tokens", response_description="An OAuth2 token")
+async def token():
+    return {"access_token": "fake-token", "token_type": "bearer"}
 
 
 class ItemType(str, Enum):
@@ -30,17 +43,10 @@ class User(BaseModel):
     full_name: Optional[str] = None
 
 
+
 @example_router.post("/items/", response_model=Item, tags=['Items'])
 async def create_item(item: Item):
     return item
-
-
-@example_router.get("/items/{item_id}", tags=['Items'])
-async def read_item(
-    item_id: int = Path(..., title="The ID of the item to get", ge=1),
-    q: Optional[str] = Query(None, max_length=50)
-):
-    return {"item_id": item_id, "q": q}
 
 
 @example_router.put("/items/{item_id}", tags=['Items'])
@@ -56,13 +62,49 @@ async def update_item(
         results.update({"q": q})
     return results
 
+
+@example_router.get("/items/{item_id}", tags=['Items'])
+async def read_item(
+    item_id: int = Path(..., title="The ID of the item to get", ge=1),
+    q: Optional[str] = Query(None, max_length=50)
+):
+    """
+    read_item
+
+    Retrieve an item by its ID.
+
+    Parameters:
+    - **item_id**: The ID of the item to get. Must be greater than or equal to 1.
+    - **q**: An optional query string to filter the results. Maximum length is 50 characters.
+
+    Returns:
+    - A dictionary containing the item ID and the query string (if provided).
+
+    Example:
+    ```
+    {
+        "item_id": 1,
+        "q": "example"
+    }
+    ```
+    """
+    return {"item_id": item_id, "q": q}
+
+
+@example_router.patch("/broken_items/{item_id}", tags=['Items'])
+async def return_error(item_id: int):
+    raise HTTPException(detail='test failure', status_code=500)
+
+
 @example_router.post("/things/login/", tags=['Things'])
 async def login(username: str = Form(...), password: str = Form(...)):
     return {"username": username}
 
+
 @example_router.delete("/things/group/{group_id}", tags=['Things'])
 async def delete_group(group_id: str):
     return {'success': True}
+
 
 @example_router.post("/things/files/", tags=['Things'])
 async def create_file(
@@ -80,6 +122,6 @@ async def create_file(
 
 
 @example_router.get("/things/users/", response_model=List[User], tags=['Things'])
-async def read_users(skip: int = 0, limit: int = 10):
+async def read_users(skip: int = 0, limit: int = 200):
     return [User(username=f"user{i}", email=f"user{i}@example.com") for i in range(skip, skip + limit)]
 
