@@ -1,6 +1,6 @@
 from _example import example_router
 from dark_swag import FastAPI
-
+from fastapi import Depends
 
 
 description = '''
@@ -39,5 +39,9 @@ config = {
 }
 
 app = FastAPI(**config)
+
+
+
+
 app.include_router(example_router)
 
