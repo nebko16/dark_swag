@@ -5,10 +5,17 @@ from typing import List, Optional
 from fastapi import APIRouter
 from fastapi import Depends
 from enum import Enum
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 
 
+http_bearer = HTTPBearer()
 example_router = APIRouter()
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+
+
+@example_router.get("/secure_items/")
+async def read_items(credentials: HTTPAuthorizationCredentials = Depends(http_bearer)):
+    return {"token": credentials.credentials}
 
 
 @example_router.get("/secure-endpoint", tags=["secure"], summary="Secure Endpoint", description="This endpoint is secured with OAuth2", response_description="A secure response")

@@ -2,14 +2,24 @@
 
 <hr>
 
-This module gives you dark-mode for <a href="https://swagger.io/specification/">Swagger OpenAPI</a> docs for your <a href="https://github.com/fastapi/fastapi?tab=readme-ov-file">FastAPI</a> apps.
+Is this what you experience when you open Swagger?
 
-- Can be as easy as a single line of code to implement; see below for details.
-- Defaults to dark-mode, but has a toggle at the top-right for switching to light-mode
-- Allows you to optionally add your own logo to the top of the doc
-- Reverses the auth padlock icon, so that it shows it locked and red when you aren't authenticated, and green and unlocked after you've authenticated.  `OpenAPI`'s decision about how this works by default is one of the strangest things I've come across.
-- Tweaked the auth modal so that it grows instead of scrolling within the window when you have several auth methods.
-- Light mode is more than just the standard doc.  It still supports the optional logo and the other fixes and tweaks.
+<img src="src/dark_swag/static/docs_images/flashbang.gif" width="160">
+
+
+`DarkSwag` module gives you dark-mode for <a href="https://swagger.io/specification/">Swagger OpenAPI</a> docs for your <a href="https://github.com/fastapi/fastapi?tab=readme-ov-file">FastAPI</a> apps.
+  - Implementation can be as easy as a single line of code; see below for details
+  - Defaults to dark-mode, but has a toggle for switching to light-mode (and back)
+  - Light mode still supports the extra features added by `DarkSwag`
+  - Allows you to optionally add your own logo to the top of the doc and a watermark-like background text for branding
+  - Due to `FastAPI` pulling the `js`/`CSS` assets from a CDN by default, `Swagger` won't load without an internet connection *(unless already cached previously by your browser)*, but `DarkSwag` will, due to serving the assets as local static files.
+
+**Changes / tweaks to standard Swagger:**
+  - Reverses the auth padlock icon state (the standard behavior is backwards IMHO)
+  - Auth modal grows vertically instead of scrolling within the inner div when you have several auth methods
+  - Standard Swagger doesn't obfuscate the token field in the auth modal, but `DarkSwag` does.
+
+<hr>
 
 <img src="src/dark_swag/static/docs_images/whole_dark.png" width="600">
 <img src="src/dark_swag/static/docs_images/whole_light.png" width="600">
@@ -44,7 +54,7 @@ There are three main ways you can implement this into your API.
 
 ### Method 2: Docs route factory (easy)
 
-  You can import the `get_dark_router` factory function to generate a route that you can immediately add to your existing `FastAPI` instance.
+  You can import the `get_dark_router` factory function to generate a route that you can immediately add to your existing `FastAPI` instance.  You will need to set `docs_url=None` upon instantiating `FastAPI` class.
 
   ```python
   from dark_swag import get_dark_router
@@ -59,7 +69,7 @@ There are three main ways you can implement this into your API.
 
 ### Method 3: Manually define the docs routes (if you need it)
 
-  You can manually define the docs route(s) yourself, and use the helper function to generate the dark-enabled html.  This is a lot more tedius and involved, so you probably won't do it this way unless you have some very specific use case, but if you need it, this is how you can do it.  The link below the example code has a full implementation that functionally matches the first two easier methods.
+  You can manually define the docs route(s) yourself, and use the helper function to generate the dark-enabled html.  This is a lot more tedius and involved, so you probably won't do it this way unless you have some very specific use case, but if you need it, this is how you can do it.  You will need to set `docs_url=None` upon instantiating `FastAPI` class.
 
   *(The example in this code block doesn't support toggling back to light mode, but the full example in the file does)*
 
@@ -151,7 +161,7 @@ Like the above logo, this is also purely for aesthetics or branding.  You basica
    
 <hr>
 
-## Aziz, light!
+## [Aziz, light!](https://www.imdb.com/title/tt0119116/quotes/?item=qt0464106&ref_=ext_shr_lnk)
 
 For our friends and colleagues that enjoy being flashbanged when they open documentation, this built-in feature is for toggling light mode.  There's a toggle button at the top right.  Implementation methods `#1` and `#2` support this without doing anything extra.  
 
@@ -164,7 +174,7 @@ If you click the `Light Mode` toggle at the top right, it will enable light mode
 
 <hr>
 
-## You shall not pass!
+## [You shall not pass!](https://www.imdb.com/title/tt0120737/quotes/?item=qt0445998&ref_=ext_shr_lnk)
 
 For some reason, the default behavior for Swagger is to show an unlocked padlock when you are **NOT** authenticated, and after authenticating, it changes it to a padlock that is locked.  
 
@@ -178,9 +188,26 @@ To me, this makes more sense, and I think most people would agree.
 **After authorization:**<br>
 <img src="src/dark_swag/static/docs_images/authorized.png" width="200">
 
+<hr>
+
 Speaking of auth, the standard auth modal scrolls within the inner div when you have more than two auth methods.  This drove me crazy.  I attempted to fix this by allowing the inner and outer divs to grow as needed.  From my limited testing, this appears to have fixed it.  I did this for light mode as well.
 
 <img src="src/dark_swag/static/docs_images/auth_modal.png" width="500">
+
+<hr>
+
+## [They're watching you, Neo.](https://getyarn.io/yarn-clip/b041886e-e4b1-4dc3-a28e-0db3e48b85d1)
+
+For some reason, the token field in the auth modal in standard Swagger shows the value in plain text, so naturally, `DarkSwag` fixes this.
+
+**Standard Swagger:**<br>
+
+> <img src="src/dark_swag/static/docs_images/visible_token.png" width="350"><br>
+
+**With DarkSwag:**<br>
+
+> <img src="src/dark_swag/static/docs_images/obfuscated_token.png" width="350"><br>
+> <img src="src/dark_swag/static/docs_images/obfuscated_token_light.png" width="350">
 
 <hr>
 
