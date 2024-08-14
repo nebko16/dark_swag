@@ -1,3 +1,17 @@
+"""
+Due to CSS SVG support being REALLY weak, especially Safari, using CSS to override an SVG path using the `d` attribute
+isn't a reliable option, so the best alternative i could come up with was either swap the values in the source files,
+or use CSS pseudoclasses to overlay the (IMO) incorrect icon states with the correct ones.
+
+FastAPI's document on OpenAPI and Redoc assets:
+  - https://fastapi.tiangolo.com/how-to/custom-docs-ui-assets/
+
+At the time of writing this, the source files are here served from this CDN:
+  - swagger_js_url = "https://unpkg.com/swagger-ui-dist@5/swagger-ui-bundle.js"
+  - swagger_css_url = "https://unpkg.com/swagger-ui-dist@5/swagger-ui.css"
+
+"""
+
 import os
 
 # todo: maybe create a build process to pull the originals down from the CDN
